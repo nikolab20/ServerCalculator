@@ -24,39 +24,67 @@ public class ClientHandler extends Thread {
 			clientInput = new BufferedReader(new InputStreamReader(socketForCommunication.getInputStream()));
 			clientOutput = new PrintStream(socketForCommunication.getOutputStream());
 
-			String entry;
+			String entry = null;
+			String operation = null;
 			int firstNumber = 0, secondNumber = 0, result = 0;
 			boolean exit = false;
 
 			while (true) {
 
-				clientOutput.println("Enter first number: ");
-				entry = clientInput.readLine();
+				do {
+					clientOutput.println("Enter first number: ");
+					entry = clientInput.readLine();
+					
+					if(entry.equals("") || entry == null)
+						clientOutput.println("You should enter a number!");
+				} while (entry.equals("") || entry == null);
+				
+				clientOutput.println("OK");
+
 				if (!entry.equals("exit"))
 					firstNumber = Integer.parseInt(entry);
 				else {
 					clientOutput.println("Goodbye :)");
 					exit = true;
 				}
-				
-				if(exit)
+
+				if (exit)
 					break;
 
-				clientOutput.println("Enter second number: ");
-				entry = clientInput.readLine();
+				do {
+					clientOutput.println("Enter second number: ");
+					entry = clientInput.readLine();
+					
+					if(entry.equals("") || entry == null)
+						clientOutput.println("You should enter a number!");
+					
+				} while (entry.equals("") || entry == null);
+				
+				clientOutput.println("OK");
+				
+
 				if (!entry.equals("exit"))
 					secondNumber = Integer.parseInt(entry);
 				else {
 					clientOutput.println("Goodbye! :)");
 					exit = true;
 				}
-				
-				if(exit)
+
+				clientOutput.println("Enter operation: ");
+				entry = clientInput.readLine();
+				if (!entry.equals("exit"))
+					operation = entry;
+				else {
+					clientOutput.println("Goodbye! :)");
+					exit = true;
+				}
+
+				if (exit)
 					break;
-				
-				clientOutput.println(Calculator.calculate(firstNumber, secondNumber) + "");
+
+				clientOutput.println(Calculator.calculate(firstNumber, secondNumber, operation) + "");
 			}
-			
+
 			socketForCommunication.close();
 
 		} catch (IOException e) {
