@@ -18,6 +18,8 @@ public class Server {
 				System.out.println("Waiting for a connection...");
 				socketForCommunication = serverSocket.accept();
 				System.out.println("Connection established.");
+				
+				ClientHandler client = new ClientHandler(socketForCommunication);
 			}
 		} catch (IOException e) {
 			System.out.println("Problems with socket!");
