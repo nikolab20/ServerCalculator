@@ -23,10 +23,38 @@ public class ClientHandler extends Thread {
 
 			clientInput = new BufferedReader(new InputStreamReader(socketForCommunication.getInputStream()));
 			clientOutput = new PrintStream(socketForCommunication.getOutputStream());
+
+			String entry;
+			int firstNumber, secondNumber, result;
+
+			while (true) {
+
+				clientOutput.println("Enter first number: ");
+				entry = clientInput.readLine();
+				if (!entry.equals("exit"))
+					firstNumber = Integer.parseInt(entry);
+				else {
+					clientOutput.println("Goodbye :)");
+					break;
+				}
+
+				clientOutput.println("Enter second number: ");
+				entry = clientInput.readLine();
+				if (!entry.equals("exit"))
+					secondNumber = Integer.parseInt(entry);
+				else {
+					clientOutput.println("Goodbye :)");
+					break;
+				}
+				
+				result = firstNumber + secondNumber;
+				clientOutput.println(result + "");
+			}
 			
+			socketForCommunication.close();
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Problems with connection.");
 		}
 	}
 }

@@ -20,6 +20,8 @@ public class Server {
 				System.out.println("Connection established.");
 				
 				ClientHandler client = new ClientHandler(socketForCommunication);
+				
+				client.start();
 			}
 		} catch (IOException e) {
 			System.out.println("Problems with socket!");
