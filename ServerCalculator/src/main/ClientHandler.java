@@ -25,7 +25,8 @@ public class ClientHandler extends Thread {
 			clientOutput = new PrintStream(socketForCommunication.getOutputStream());
 
 			String entry;
-			int firstNumber, secondNumber, result;
+			int firstNumber = 0, secondNumber = 0, result = 0;
+			boolean exit = false;
 
 			while (true) {
 
@@ -35,20 +36,25 @@ public class ClientHandler extends Thread {
 					firstNumber = Integer.parseInt(entry);
 				else {
 					clientOutput.println("Goodbye :)");
-					break;
+					exit = true;
 				}
+				
+				if(exit)
+					break;
 
 				clientOutput.println("Enter second number: ");
 				entry = clientInput.readLine();
 				if (!entry.equals("exit"))
 					secondNumber = Integer.parseInt(entry);
 				else {
-					clientOutput.println("Goodbye :)");
-					break;
+					clientOutput.println("Goodbye! :)");
+					exit = true;
 				}
 				
-				result = firstNumber + secondNumber;
-				clientOutput.println(result + "");
+				if(exit)
+					break;
+				
+				clientOutput.println(Calculator.calculate(firstNumber, secondNumber) + "");
 			}
 			
 			socketForCommunication.close();
