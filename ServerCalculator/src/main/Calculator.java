@@ -2,9 +2,9 @@ package main;
 
 public class Calculator {
 
-	public static int calculate(int firstNumber, int secondNumber, String operation) {
+	public static double calculate(double firstNumber, double secondNumber, String operation) {
 
-		int result = 0;
+		double result = 0;
 
 		switch (operation) {
 		case "+": {

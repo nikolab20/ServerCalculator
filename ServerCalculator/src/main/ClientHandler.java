@@ -26,7 +26,7 @@ public class ClientHandler extends Thread {
 
 			String entry = null;
 			String operation = null;
-			int firstNumber = 0, secondNumber = 0, result = 0;
+			double firstNumber = 0, secondNumber = 0, result = 0;
 			boolean exit = false;
 
 			while (true) {
@@ -34,15 +34,15 @@ public class ClientHandler extends Thread {
 				do {
 					clientOutput.println("Enter first number: ");
 					entry = clientInput.readLine();
-					
-					if(entry.equals("") || entry == null)
+
+					if (!Control.isInputNumbersOk(entry))
 						clientOutput.println("You should enter a number!");
-				} while (entry.equals("") || entry == null);
-				
+				} while (!Control.isInputNumbersOk(entry));
+
 				clientOutput.println("OK");
 
 				if (!entry.equals("exit"))
-					firstNumber = Integer.parseInt(entry);
+					firstNumber = Double.parseDouble(entry);
 				else {
 					clientOutput.println("Goodbye :)");
 					exit = true;
@@ -54,24 +54,32 @@ public class ClientHandler extends Thread {
 				do {
 					clientOutput.println("Enter second number: ");
 					entry = clientInput.readLine();
-					
-					if(entry.equals("") || entry == null)
+
+					if (!Control.isInputNumbersOk(entry))
 						clientOutput.println("You should enter a number!");
-					
-				} while (entry.equals("") || entry == null);
-				
+
+				} while (!Control.isInputNumbersOk(entry));
+
 				clientOutput.println("OK");
-				
 
 				if (!entry.equals("exit"))
-					secondNumber = Integer.parseInt(entry);
+					secondNumber = Double.parseDouble(entry);
 				else {
 					clientOutput.println("Goodbye! :)");
 					exit = true;
 				}
 
-				clientOutput.println("Enter operation: ");
-				entry = clientInput.readLine();
+				do {
+					clientOutput.println("Enter operation: ");
+					entry = clientInput.readLine();
+
+					if (!Control.isInputSignOk(entry))
+						clientOutput.println("You should enter a sign of operation!");
+
+				} while (!Control.isInputSignOk(entry));
+
+				clientOutput.println("OK");
+
 				if (!entry.equals("exit"))
 					operation = entry;
 				else {
@@ -82,9 +90,14 @@ public class ClientHandler extends Thread {
 				if (exit)
 					break;
 
-				clientOutput.println(Calculator.calculate(firstNumber, secondNumber, operation) + "");
+				if (Control.isDivideByZero(secondNumber, operation)) {
+					clientOutput.println("It's not possible to divide by zero.");
+				} else {
+					clientOutput.println(Calculator.calculate(firstNumber, secondNumber, operation) + "");
+				}
 			}
 
+			System.out.println("Client disconnected.");
 			socketForCommunication.close();
 
 		} catch (IOException e) {
