@@ -1,12 +1,15 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import main.ClientHandler;
 
@@ -29,7 +32,7 @@ public class GUIControler {
 		});
 	}
 
-	public static void startServer(JTextArea jtaServer) {
+	public static void startServer(JTextArea jtaServer, JPanel colorPanel, JMenuItem startItem, JMenuItem stopItem) {
 
 		new Thread(new Runnable() {
 			@Override
@@ -38,21 +41,40 @@ public class GUIControler {
 					serverSocket = new ServerSocket(9000);
 
 					while (true) {
-						text += "Waiting for a connection...\n";
-						jtaServer.setText(text);
+						jtaServer.append("Waiting for a connection...\n");
+						colorPanel.setBackground(Color.GREEN);
+						startItem.setEnabled(false);
+						stopItem.setEnabled(true);
 						socketForCommunication = serverSocket.accept();
-						text += "Connection established.\n";
-						jtaServer.setText(text);
+						jtaServer.append("Connection established.\n");
 
 						ClientHandler client = new ClientHandler(socketForCommunication);
 
 						client.start();
 					}
+				} catch (SocketException e) {
+					if (serverSocket != null && serverSocket.isClosed()) {
+						jtaServer.append("Connection Closed.\n");
+						startItem.setEnabled(true);
+						stopItem.setEnabled(false);
+						colorPanel.setBackground(Color.RED);
+					} else if (serverSocket == null)
+						jtaServer.append("Port is unreachable.\n");
 				} catch (IOException e) {
-					text += "Problems with socket!\n";
-					jtaServer.setText(text);
+					startItem.setEnabled(true);
+					stopItem.setEnabled(false);
+					jtaServer.append("Accept failed.\n");
 				}
 			}
 		}).start();
+
+	}
+
+	public static void stopServer(JTextArea jtaServer) {
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			jtaServer.append("Sockets are already closed.\n");
+		}
 	}
 }

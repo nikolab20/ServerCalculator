@@ -1,24 +1,20 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import net.miginfocom.swing.MigLayout;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JMenuBar;
 import java.awt.Dimension;
-import javax.swing.JTextPane;
-import javax.swing.JButton;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JTextArea;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
+import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class ServerGUI extends JFrame {
 
@@ -27,10 +23,15 @@ public class ServerGUI extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JPanel panel;
 	private JMenuBar menuBar;
-	private JButton btnStartServer;
+	private JMenu mnFile;
+	private JMenuItem startItem;
+	private JMenuItem exitItem;
+	private JSeparator separator;
+	private JScrollPane scrollPane;
 	private JTextArea jtaServer;
+	private JPanel colorPanel;
+	private JMenuItem stopItem;
 
 	/**
 	 * Create the frame.
@@ -45,56 +46,87 @@ public class ServerGUI extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		contentPane.add(getPanel(), BorderLayout.CENTER);
-	}
-	private JPanel getPanel() {
-		if (panel == null) {
-			panel = new JPanel();
-			GroupLayout gl_panel = new GroupLayout(panel);
-			gl_panel.setHorizontalGroup(
-				gl_panel.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_panel.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(getJtaServer(), GroupLayout.PREFERRED_SIZE, 166, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(getBtnStartServer(), GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-						.addContainerGap())
-			);
-			gl_panel.setVerticalGroup(
-				gl_panel.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_panel.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(getBtnStartServer())
-							.addComponent(getJtaServer(), GroupLayout.PREFERRED_SIZE, 118, GroupLayout.PREFERRED_SIZE))
-						.addContainerGap(95, Short.MAX_VALUE))
-			);
-			panel.setLayout(gl_panel);
-		}
-		return panel;
+		contentPane.add(getScrollPane(), BorderLayout.CENTER);
+		contentPane.add(getColorPanel(), BorderLayout.EAST);
 	}
 	private JMenuBar getMenuBar_1() {
 		if (menuBar == null) {
 			menuBar = new JMenuBar();
+			menuBar.add(getMnFile());
 		}
 		return menuBar;
 	}
-	private JButton getBtnStartServer() {
-		if (btnStartServer == null) {
-			btnStartServer = new JButton("Start");
-			btnStartServer.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					GUIControler.startServer(jtaServer);
+	private JMenu getMnFile() {
+		if (mnFile == null) {
+			mnFile = new JMenu("File");
+			mnFile.add(getStartItem());
+			mnFile.add(getStopItem());
+			mnFile.add(getSeparator());
+			mnFile.add(getExitItem());
+		}
+		return mnFile;
+	}
+	private JMenuItem getStartItem() {
+		if (startItem == null) {
+			startItem = new JMenuItem("Start server");
+			startItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GUIControler.startServer(jtaServer, colorPanel, startItem, stopItem);
 				}
 			});
 		}
-		return btnStartServer;
+		return startItem;
+	}
+	private JMenuItem getExitItem() {
+		if (exitItem == null) {
+			exitItem = new JMenuItem("Exit");
+			exitItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.exit(0);
+				}
+			});
+		}
+		return exitItem;
+	}
+	private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+		}
+		return separator;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setViewportView(getJtaServer());
+		}
+		return scrollPane;
 	}
 	private JTextArea getJtaServer() {
 		if (jtaServer == null) {
 			jtaServer = new JTextArea();
 		}
 		return jtaServer;
+	}
+	private JPanel getColorPanel() {
+		if (colorPanel == null) {
+			colorPanel = new JPanel();
+			colorPanel.setBackground(Color.RED);
+		}
+		return colorPanel;
+	}
+	private JMenuItem getStopItem() {
+		if (stopItem == null) {
+			stopItem = new JMenuItem("Stop server");
+			stopItem.setEnabled(false);
+			stopItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(!GUIControler.serverSocket.isClosed()){
+						GUIControler.stopServer(jtaServer);
+					}
+					GUIControler.stopServer(jtaServer);
+				}
+			});
+		}
+		return stopItem;
 	}
 }
