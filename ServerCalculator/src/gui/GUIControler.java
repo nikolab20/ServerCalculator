@@ -8,12 +8,15 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import main.ClientHandler;
 
 public class GUIControler {
+	
+	public static ServerGUI mainWindow;
 
 	static Socket socketForCommunication = null;
 	static ServerSocket serverSocket = null;
@@ -23,8 +26,8 @@ public class GUIControler {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ServerGUI frame = new ServerGUI();
-					frame.setVisible(true);
+					mainWindow = new ServerGUI();
+					mainWindow.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -54,7 +57,7 @@ public class GUIControler {
 					}
 				} catch (SocketException e) {
 					if (serverSocket != null && serverSocket.isClosed()) {
-						jtaServer.append("Connection Closed.\n");
+						jtaServer.append("Connection closed.\n");
 						startItem.setEnabled(true);
 						stopItem.setEnabled(false);
 						colorPanel.setBackground(Color.RED);
@@ -67,7 +70,6 @@ public class GUIControler {
 				}
 			}
 		}).start();
-
 	}
 
 	public static void stopServer(JTextArea jtaServer) {
@@ -76,5 +78,13 @@ public class GUIControler {
 		} catch (IOException e) {
 			jtaServer.append("Sockets are already closed.\n");
 		}
+	}
+
+	public static void exitApp(JPanel contentPane, JTextArea jtaServer) {
+		int option = JOptionPane.showConfirmDialog(mainWindow, "Do you really want to quit?",
+				"Exit", JOptionPane.YES_NO_OPTION);
+
+		if (option == JOptionPane.YES_OPTION) 
+			System.exit(0);
 	}
 }

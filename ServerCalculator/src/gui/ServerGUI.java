@@ -15,6 +15,8 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ServerGUI extends JFrame {
 
@@ -29,7 +31,7 @@ public class ServerGUI extends JFrame {
 	private JMenuItem exitItem;
 	private JSeparator separator;
 	private JScrollPane scrollPane;
-	private JTextArea jtaServer;
+	private static JTextArea jtaServer;
 	private JPanel colorPanel;
 	private JMenuItem stopItem;
 
@@ -37,9 +39,15 @@ public class ServerGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public ServerGUI() {
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				GUIControler.exitApp(contentPane, jtaServer);
+			}
+		});
 		setPreferredSize(new Dimension(130, 0));
 		setMinimumSize(new Dimension(330, 200));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 330, 200);
 		setJMenuBar(getMenuBar_1());
 		contentPane = new JPanel();
@@ -82,7 +90,7 @@ public class ServerGUI extends JFrame {
 			exitItem = new JMenuItem("Exit");
 			exitItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					System.exit(0);
+					GUIControler.exitApp(contentPane, jtaServer);
 				}
 			});
 		}
@@ -128,5 +136,13 @@ public class ServerGUI extends JFrame {
 			});
 		}
 		return stopItem;
+	}
+	
+	public static void clientDisconnetedMessage() {
+		jtaServer.append("Client disconnected.\n");
+	}
+	
+	public static void clientErrorMessage() {
+		jtaServer.append("Problems with streams.\n");
 	}
 }
