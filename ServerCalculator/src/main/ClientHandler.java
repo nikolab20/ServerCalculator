@@ -22,6 +22,7 @@ public class ClientHandler extends Thread {
 
 		String username = "guest";
 		String password = null;
+		String expressions = "";
 		boolean loggedIn = false;
 
 		try {
@@ -92,7 +93,7 @@ public class ClientHandler extends Thread {
 							break;
 						}
 
-						registered = User.registerClient(username, password);
+						registered = User.registerClient(username, password, expressions);
 
 						if (username.equals("")) {
 							forClient.println("You must enter a username!");
@@ -134,26 +135,36 @@ public class ClientHandler extends Thread {
 						first = fromClient.readLine();
 						second = fromClient.readLine();
 						operation = fromClient.readLine();
+						
+						if (first.equals("/history") && second.equals("/history")) {
+							forClient.println(User.returnHistory(username, password));
+							continue;
+						}
 
 						if (!Control.isInputNumbersOk(first) || !Control.isInputNumbersOk(second))
 							forClient.println("You should enter a number!");
-						else
-							forClient.println("OK");
+							
+						forClient.println("OK");
 
-						if (!first.equals("/exit") && !second.equals("/exit")) {
-							firstNumber = Double.parseDouble(first);
-							secondNumber = Double.parseDouble(second);
-						} else {
+						if (first.equals("/exit") && second.equals("/exit")) 
 							exit = true;
-						}
 
 						if (exit)
 							break;
+						
+						
+						
+						firstNumber = Double.parseDouble(first);
+						secondNumber = Double.parseDouble(second);
 
 						if (Control.isDivideByZero(secondNumber, operation)) {
 							forClient.println("It's not possible to divide by zero.");
 						} else {
-							forClient.println(Calculator.calculate(firstNumber, secondNumber, operation) + "");
+							double result = Calculator.calculate(firstNumber, secondNumber, operation);
+							String expression = User.returnHistory(username, password);
+							expression = expression + firstNumber + operation + secondNumber + "=" + result + ", ";
+							User.writeInHistory(username, password, expression);
+							forClient.println(result + "");
 						}
 					}
 				} else {

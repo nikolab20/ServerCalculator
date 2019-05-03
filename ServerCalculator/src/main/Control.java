@@ -3,7 +3,7 @@ package main;
 public class Control {
 
 	public static boolean isInputNumbersOk(String entry) {
-		if (entry.equals("exit"))
+		if (entry.equals("/exit") || entry.equals("/history"))
 			return true;
 
 		try {

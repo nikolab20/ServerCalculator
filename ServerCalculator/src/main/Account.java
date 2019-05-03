@@ -8,14 +8,29 @@ import com.google.gson.JsonObject;
 public class Account {
 	String username;
 	String password;
+	String expression;
 
 	public Account(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
 
+	public Account(String username, String password, String izrazi) {
+		this.username = username;
+		this.password = password;
+		this.expression = izrazi;
+	}
+
 	public Account() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public String getExpression() {
+		return expression;
+	}
+
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 
 	public String getUsername() {
@@ -43,6 +58,7 @@ public class Account {
 			JsonObject accountJson = new JsonObject();
 			accountJson.addProperty("username", a.getUsername());
 			accountJson.addProperty("password", a.getPassword());
+			accountJson.addProperty("expression", a.getExpression());
 
 			accountsArray.add(accountJson);
 		}
@@ -60,25 +76,12 @@ public class Account {
 
 			a.setUsername(accountJson.get("username").getAsString());
 			a.setPassword(accountJson.get("password").getAsString());
+			a.setExpression(accountJson.get("expression").getAsString());
 
 			accounts.add(a);
 		}
 
 		return accounts;
-	}
-
-//	public static String getPassString(char[] password) {
-//		String pass = "";
-//
-//		for (int i = 0; i < password.length; i++) {
-//			pass = pass + password[i];
-//		}
-//
-//		return pass;
-//	}
-
-	public String toString() {
-		return "Account [username=" + username + ",\n password=" + password + "]\n";
 	}
 
 }
