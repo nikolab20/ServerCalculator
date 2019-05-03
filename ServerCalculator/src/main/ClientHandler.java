@@ -27,7 +27,7 @@ public class ClientHandler extends Thread {
 
 			String operation = null;
 			String first, second;
-			double firstNumber = 0, secondNumber = 0, result = 0;
+			double firstNumber = 0, secondNumber = 0;
 			boolean exit = false;
 
 			while (true) {
@@ -38,21 +38,18 @@ public class ClientHandler extends Thread {
 
 				if (!Control.isInputNumbersOk(first) || !Control.isInputNumbersOk(second))
 					clientOutput.println("You should enter a number!");
-				else if (!Control.isInputSignOk(operation))
-					clientOutput.println("You should enter a sign of operation!");
 				else
 					clientOutput.println("OK");
 
-				firstNumber = Double.parseDouble(first);
-				secondNumber = Double.parseDouble(second);
+				
 
-//				if (!first.equals("exit") && !second.equals("exit") && !operation.equals("exit")) {
-//					
-//				} else {
-//					clientOutput.println("Goodbye :)");
-//					exit = true;
-//				}
-//
+				if (!first.equals("exit") && !second.equals("exit")) {
+					firstNumber = Double.parseDouble(first);
+					secondNumber = Double.parseDouble(second);
+				} else {
+					exit = true;
+				}
+
 				if (exit)
 					break;
 
