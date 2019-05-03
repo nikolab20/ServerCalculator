@@ -74,7 +74,8 @@ public class ClientHandler extends Thread {
 
 					} while (username.equals("") || password.equals("") || !loggedIn);
 
-					ServerGUI.clientLoggedInMessage(username);
+					if (!username.equals("/exit"))
+						ServerGUI.clientLoggedInMessage(username);
 
 				} else if (input.equals("/reg")) {
 
@@ -135,7 +136,7 @@ public class ClientHandler extends Thread {
 						first = fromClient.readLine();
 						second = fromClient.readLine();
 						operation = fromClient.readLine();
-						
+
 						if (first.equals("/history") && second.equals("/history")) {
 							forClient.println(User.returnHistory(username, password));
 							continue;
@@ -143,17 +144,15 @@ public class ClientHandler extends Thread {
 
 						if (!Control.isInputNumbersOk(first) || !Control.isInputNumbersOk(second))
 							forClient.println("You should enter a number!");
-							
+
 						forClient.println("OK");
 
-						if (first.equals("/exit") && second.equals("/exit")) 
+						if (first.equals("/exit") && second.equals("/exit"))
 							exit = true;
 
 						if (exit)
 							break;
-						
-						
-						
+
 						firstNumber = Double.parseDouble(first);
 						secondNumber = Double.parseDouble(second);
 
@@ -201,6 +200,9 @@ public class ClientHandler extends Thread {
 					}
 				}
 			}
+
+			if (username.equals("/exit"))
+				username = "guest";
 
 			ServerGUI.clientDisconnetedMessage(username);
 			socketForCommunication.close();
