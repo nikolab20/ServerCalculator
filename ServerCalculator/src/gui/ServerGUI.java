@@ -57,6 +57,7 @@ public class ServerGUI extends JFrame {
 		contentPane.add(getScrollPane(), BorderLayout.CENTER);
 		contentPane.add(getColorPanel(), BorderLayout.EAST);
 	}
+
 	private JMenuBar getMenuBar_1() {
 		if (menuBar == null) {
 			menuBar = new JMenuBar();
@@ -64,6 +65,7 @@ public class ServerGUI extends JFrame {
 		}
 		return menuBar;
 	}
+
 	private JMenu getMnFile() {
 		if (mnFile == null) {
 			mnFile = new JMenu("File");
@@ -74,6 +76,7 @@ public class ServerGUI extends JFrame {
 		}
 		return mnFile;
 	}
+
 	private JMenuItem getStartItem() {
 		if (startItem == null) {
 			startItem = new JMenuItem("Start server");
@@ -85,6 +88,7 @@ public class ServerGUI extends JFrame {
 		}
 		return startItem;
 	}
+
 	private JMenuItem getExitItem() {
 		if (exitItem == null) {
 			exitItem = new JMenuItem("Exit");
@@ -96,12 +100,14 @@ public class ServerGUI extends JFrame {
 		}
 		return exitItem;
 	}
+
 	private JSeparator getSeparator() {
 		if (separator == null) {
 			separator = new JSeparator();
 		}
 		return separator;
 	}
+
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
@@ -109,12 +115,14 @@ public class ServerGUI extends JFrame {
 		}
 		return scrollPane;
 	}
+
 	private JTextArea getJtaServer() {
 		if (jtaServer == null) {
 			jtaServer = new JTextArea();
 		}
 		return jtaServer;
 	}
+
 	private JPanel getColorPanel() {
 		if (colorPanel == null) {
 			colorPanel = new JPanel();
@@ -122,13 +130,14 @@ public class ServerGUI extends JFrame {
 		}
 		return colorPanel;
 	}
+
 	private JMenuItem getStopItem() {
 		if (stopItem == null) {
 			stopItem = new JMenuItem("Stop server");
 			stopItem.setEnabled(false);
 			stopItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(!GUIControler.serverSocket.isClosed()){
+					if (!GUIControler.serverSocket.isClosed()) {
 						GUIControler.stopServer(jtaServer);
 					}
 					GUIControler.stopServer(jtaServer);
@@ -137,11 +146,15 @@ public class ServerGUI extends JFrame {
 		}
 		return stopItem;
 	}
-	
-	public static void clientDisconnetedMessage() {
-		jtaServer.append("Client disconnected.\n");
+
+	public static void clientLoggedInMessage(String username) {
+		jtaServer.append("User " + username + " logged in.\n");
 	}
-	
+
+	public static void clientDisconnetedMessage(String username) {
+		jtaServer.append("User " + username + " disconnected.\n");
+	}
+
 	public static void clientErrorMessage() {
 		jtaServer.append("Problems with streams.\n");
 	}

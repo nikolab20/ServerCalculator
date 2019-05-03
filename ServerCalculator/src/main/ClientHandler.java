@@ -22,6 +22,7 @@ public class ClientHandler extends Thread {
 
 		String username = "guest";
 		String password = null;
+		boolean loggedIn = false;
 
 		try {
 
@@ -44,7 +45,7 @@ public class ClientHandler extends Thread {
 
 				} else if (input.equals("/login")) {
 
-					boolean loggedIn = false;
+					loggedIn = false;
 
 					do {
 						username = fromClient.readLine();
@@ -71,6 +72,8 @@ public class ClientHandler extends Thread {
 							forClient.println("OK");
 
 					} while (username.equals("") || password.equals("") || !loggedIn);
+
+					ServerGUI.clientLoggedInMessage(username);
 
 				} else if (input.equals("/reg")) {
 
@@ -102,7 +105,7 @@ public class ClientHandler extends Thread {
 						} else if (!User.haveNumbers(password)) {
 							forClient.println("Password must have at least one digit!");
 						} else if (!registered) {
-							forClient.println("User does not exist!");
+							forClient.println("The user already exist!");
 						} else {
 							forClient.println("OK");
 						}
@@ -110,44 +113,85 @@ public class ClientHandler extends Thread {
 					} while (username.equals("") || password.equals("") || !registered || password.length() < 8
 							|| !User.haveCapitalLetter(password) || !User.haveNumbers(password));
 
+					if (registered) {
+						loggedIn = User.loginClient(username, password);
+						ServerGUI.clientLoggedInMessage(username);
+					}
+
 				} else if (input.equals("/guest")) {
 					guest = true;
+
+					ServerGUI.clientLoggedInMessage(username);
 				}
 
 			} while (!input.equals("/exit") && !input.equals("/login") && !input.equals("/reg")
 					&& !input.equals("/guest"));
 
 			if (!exit) {
-				while (true) {
+				if (!guest) {
+					while (true) {
 
-					first = fromClient.readLine();
-					second = fromClient.readLine();
-					operation = fromClient.readLine();
+						first = fromClient.readLine();
+						second = fromClient.readLine();
+						operation = fromClient.readLine();
 
-					if (!Control.isInputNumbersOk(first) || !Control.isInputNumbersOk(second))
-						forClient.println("You should enter a number!");
-					else
-						forClient.println("OK");
+						if (!Control.isInputNumbersOk(first) || !Control.isInputNumbersOk(second))
+							forClient.println("You should enter a number!");
+						else
+							forClient.println("OK");
 
-					if (!first.equals("exit") && !second.equals("exit")) {
-						firstNumber = Double.parseDouble(first);
-						secondNumber = Double.parseDouble(second);
-					} else {
-						exit = true;
+						if (!first.equals("/exit") && !second.equals("/exit")) {
+							firstNumber = Double.parseDouble(first);
+							secondNumber = Double.parseDouble(second);
+						} else {
+							exit = true;
+						}
+
+						if (exit)
+							break;
+
+						if (Control.isDivideByZero(secondNumber, operation)) {
+							forClient.println("It's not possible to divide by zero.");
+						} else {
+							forClient.println(Calculator.calculate(firstNumber, secondNumber, operation) + "");
+						}
 					}
+				} else {
+					int i = 0;
 
-					if (exit)
-						break;
+					while (i < 3) {
 
-					if (Control.isDivideByZero(secondNumber, operation)) {
-						forClient.println("It's not possible to divide by zero.");
-					} else {
-						forClient.println(Calculator.calculate(firstNumber, secondNumber, operation) + "");
+						first = fromClient.readLine();
+						second = fromClient.readLine();
+						operation = fromClient.readLine();
+
+						if (!Control.isInputNumbersOk(first) || !Control.isInputNumbersOk(second))
+							forClient.println("You should enter a number!");
+						else
+							forClient.println("OK");
+
+						if (!first.equals("/exit") && !second.equals("/exit")) {
+							firstNumber = Double.parseDouble(first);
+							secondNumber = Double.parseDouble(second);
+						} else {
+							exit = true;
+						}
+
+						if (exit)
+							break;
+
+						if (Control.isDivideByZero(secondNumber, operation)) {
+							forClient.println("It's not possible to divide by zero.");
+						} else {
+							forClient.println(Calculator.calculate(firstNumber, secondNumber, operation) + "");
+						}
+
+						i++;
 					}
 				}
 			}
-			
-			ServerGUI.clientDisconnetedMessage();
+
+			ServerGUI.clientDisconnetedMessage(username);
 			socketForCommunication.close();
 
 		} catch (IOException e) {
